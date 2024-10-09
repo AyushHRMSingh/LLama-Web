@@ -26,27 +26,49 @@ export default function Home() {
     if (formData.get('type') == "login") {
       try {
         const result = await signInUserWithEmailAndPassword(formData.get("email") as string, formData.get("password") as string)
-        if(result) {
+        if(typeof(result) == 'object' && result.success == true) {
           toast({
             title: "Login Successfull",
             description: "You have been logged in successfully, wait to be redirected",
           });
           router.push("/dashboard")
+        } else {
+          toast({
+            variant:"destructive",
+            title: "Login Unsuccessful",
+            description: "Login could not be authenticated",
+          });
         }
       }
       catch(err) {
+        console.log("err2");
         console.log(err);
       }
     }
     else if (formData.get('type') == "signup") {
       try {
         if (formData.get("password") !== formData.get("cpassword")) {
-          // console.log("passwords do not match");
+          toast({
+            variant:"destructive",
+            title: "Passwords Do Not match"
+          });
           return;
         }
+        const passlen = formData.get("password")?.toString().length || 0;
+        if (formData.get("password") &&  passlen <6) {
+          toast({
+            variant:"destructive",
+            title: "Password must be longer than 6 characters"
+          });
+          return
+        }
         const result = await registerUserWithEmailAndPassword(formData.get("email") as string, formData.get("password") as string)
-        if(result) {
-          // console.log("success");
+        if(result == true) {
+          toast({
+            title: "Sign Up Successfull",
+            description: "You have signed up successfully, wait to be redirected",
+          });
+          router.push('/dashboard');
         }
       }
       catch(err) {

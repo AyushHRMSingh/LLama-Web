@@ -51,10 +51,19 @@ export const registerUserWithEmailAndPassword = async (email:string, password:st
 
 export const signInUserWithEmailAndPassword = async (email:string, password:string) => {
   if (!email || !password) return false;
-
-  const userCredential = await signInWithEmailAndPassword(auth, email, password);
-  
-  return true;
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return {
+      success:true,
+      message:"Account authenticated successfully"
+    };
+  } catch(e) {
+    console.error(e)
+    return {
+      success:false,
+      message:"Authentication Failed"
+    };
+  }
 };
 
 export const signOutUser = async () => {

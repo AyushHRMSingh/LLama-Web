@@ -2,16 +2,26 @@ import { NextRequest } from 'next/server';
 import { registerResource } from '@/functions/registerResource';
 import { headers } from 'next/headers';
 
-
 export async function POST(request: NextRequest) {
-  // const userdata = await request.json();
-  // const { email, password, accessToken } = userdata;
-  
-  // console.log(email, password, accessToken, request.url);
-  // const response = await registerResource(email, password, accessToken, request.headers);
-  const response = headers().get("x-forwarded-for");
-  console.log(response);
-  let res = response?.split(":")[3];
+  try {
+    const userdata = await request.json();
+    if (userdata) {
+      const { email, password, accessToken } = userdata;
 
-  return new Response("response", { status: 200 });
+      if (email && password && accessToken) {
+        const ip = headers().get("x-forwarded-for") || "";
+        console.log(email, password, accessToken, request.url);
+        const response = await registerResource(email, password, accessToken, ip);
+        console.log(response);
+        return new Response("Registration successful", { status: 200 });
+      } else {
+        return new Response("Invalid data provided", { status: 400 });
+      }
+    } else {
+      return new Response("No data provided", { status: 400 });
+    }
+  } catch (error) {
+    console.error("Error parsing JSON");
+    return new Response("Invalid JSON", { status: 400 });
+  }
 }
