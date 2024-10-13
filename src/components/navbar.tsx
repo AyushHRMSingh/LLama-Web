@@ -46,10 +46,11 @@ export function SignCheck() {
     // console.log("isfalse");
     router.push("/login");
   }
-  if (currentUser && currentUser != "false") {
+  if (currentUser && currentUser != null) {
     var jsonuser = JSON.parse(JSON.stringify(currentUser));
     email = jsonuser["email"];
-    // console.log("isloggedin");
+    console.log("isloggedin");
+    console.log(jsonuser);
     loggedin = true;
   }
   const url = new URL('/login', window.location.href);

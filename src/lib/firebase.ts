@@ -84,3 +84,13 @@ export const updateResource = async (resourceDict: JSON, user:any) => {
     }
   }
 }
+
+export const getResource = async (user:any) => {
+  const userDocRef = await doc(db, 'users', user["uid"]);
+  const userDocSnap = await getDoc(userDocRef);
+  if (userDocSnap.exists()) {
+    return userDocSnap.data().resources;
+  } else {
+    return {};
+  }
+}
