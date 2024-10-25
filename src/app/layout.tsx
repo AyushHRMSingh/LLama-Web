@@ -8,7 +8,16 @@ import { Navbar } from "@/components/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const Loading = () => <div>Loading...</div>;
+const Loading = () => (
+  <div className="w-full h-full overflow-x-hidden">
+    <div className="flex items-center justify-center h-full">
+      <div className="flex flex-col items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+        <div className="text-gray-900 mt-4">Loading...</div>
+      </div>
+    </div>
+  </div>
+);
 
 const LayoutContent = ({ children }:any) => {
   const { loading }:any = useAuth();
@@ -27,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} overflow-x-hidden`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

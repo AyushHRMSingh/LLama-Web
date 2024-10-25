@@ -56,7 +56,7 @@ export function SignCheck() {
   const url = new URL('/login', window.location.href);
   return (
     <>
-    {!currentUser ? (
+    {currentUser == "false" ? (
       <Avatar className="animate-spin">
         <AvatarImage src={loadingpath} />
         <AvatarFallback>CN</AvatarFallback>
