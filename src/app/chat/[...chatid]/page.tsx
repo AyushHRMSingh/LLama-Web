@@ -1,7 +1,3 @@
-// app/chat/[chatid]/page.tsx
-
-import { useRouter } from 'next/router';
-
 const ChatPage = ({ params }: { params: { chatid: string } }) => {
   const { chatid } = params;
   

@@ -6,23 +6,47 @@ export async function getChatList(addr:string, accessToken:string) {
   } else {
     addra = `http://[${addr}]:2077/getchatlist`;
   }
-  return await fetch(addra,{
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      accessToken: accessToken,
+  try{
+    const result  = await fetch(addra,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        accessToken: accessToken,
+      })
     })
-  })
-  .then((response) => response.json())
-  .then((data) => {
-    if (data.success != true) {
-      console.log("error");
-      return [];
-    } else {
-      console.log("success");
+    .then((response) => {
+      console.log(response);
+      console.log(response.status);
+      if (response.status == 200) {
+        return response.json();
+      }
+      return [, {
+        status: response.status,
+      }];
+    })
+    // .then((response) => response.json())
+    .then((data) => {
+      console.log("data progrfessed");
+      // if (data.success != true) {
+      //   console.log("error");
+      //   return null;
+      // } else {
+      //   console.log("success");
+      //   return data.chatList;
+      // }
       return data.chatList;
-    }
-  })
+    })
+    return [result, {
+      status: 200,
+    }];
+  } catch (e) {
+    console.log("error");
+    console.log(e);
+    return [[], {
+      status: 404,
+      message: `${e}`,
+    }];
+  }
 }
