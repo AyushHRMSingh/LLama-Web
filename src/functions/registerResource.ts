@@ -12,5 +12,5 @@ export async function registerResource(email:string, password:string, accessToke
     "ip": ip
   }
   await updateResource(JSON.parse(JSON.stringify(resourceDict)), user);
-  return response;
+  return [response, user];
 }

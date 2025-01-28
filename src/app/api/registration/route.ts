@@ -9,14 +9,14 @@ export async function POST(request: NextRequest) {
     const userdata = await request.json();
     if (userdata) {
       const { email, password, accessToken } = userdata;
-
       if (email && password && accessToken) {
         console.log(email, password, accessToken, request.url);
-        const response = await registerResource(email, password, accessToken, ip);
+        const [response, details] = await registerResource(email, password, accessToken, ip);
         console.log(response);
         // return json
         return new Response(JSON.stringify({
           success:true,
+          details:details
         }), {
           headers: {
             "content-type": "application/json",

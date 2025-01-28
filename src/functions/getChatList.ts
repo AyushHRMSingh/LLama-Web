@@ -28,7 +28,7 @@ export async function getChatList(addr:string, accessToken:string) {
     })
     // .then((response) => response.json())
     .then((data) => {
-      console.log("data progrfessed");
+      console.log("data progressed");
       // if (data.success != true) {
       //   console.log("error");
       //   return null;
