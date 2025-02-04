@@ -7,7 +7,7 @@ export async function getResourceServer(currentUser:any) {
   if (jsonuser != null) {
     var data = await getResource(jsonuser);
     const token = data.accessToken;
-    const addr = data.ip;
+    const addr = data.url;
     return {token,addr};
   } else {
     return {};

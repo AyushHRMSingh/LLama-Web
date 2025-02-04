@@ -1,11 +1,6 @@
 export async function getChatList(addr:string, accessToken:string) {
   console.log("getChatList");
-  let addra;
-  if (addr.split(".").length == 4) {
-    addra = `https://${addr}:2077/getchatlist`;
-  } else {
-    addra = `https://[${addr}]:2077/getchatlist`;
-  }
+  let addra = addr;
   try{
     const result  = await fetch(addra,{
       method: 'POST',
