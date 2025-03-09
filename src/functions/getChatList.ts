@@ -1,6 +1,7 @@
 export async function getChatList(addr:string, accessToken:string) {
   console.log("getChatList");
-  let addra = addr;
+  // console.log(addr, accessToken);
+  let addra = addr+"/chatlist";
   try{
     const result  = await fetch(addra,{
       method: 'POST',
@@ -12,8 +13,6 @@ export async function getChatList(addr:string, accessToken:string) {
       })
     })
     .then((response) => {
-      console.log(response);
-      console.log(response.status);
       if (response.status == 200) {
         return response.json();
       }
@@ -31,7 +30,7 @@ export async function getChatList(addr:string, accessToken:string) {
       //   console.log("success");
       //   return data.chatList;
       // }
-      return data.chatList;
+      return data.list;
     })
     return [result, {
       status: 200,

@@ -5,6 +5,8 @@ import { getChatList } from "@/functions/getChatList";
 import { useAuth } from '@/context/user.context';
 import { Loading } from "@/components/Loader";
 import { Button } from "@/components/ui/button"
+
+import { AddChatDialog } from "@/components/addChatDialog";
 import {
   Dialog,
   DialogClose,
@@ -15,8 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+
 import { MessageCirclePlus } from 'lucide-react';
 import {
   Select,
@@ -29,75 +30,37 @@ import {
 } from "@/components/ui/select"
 
 import { ChatList } from "@/components/chatlist";
-
-// export function ChatList({Statusa, Data}:any) {
-//   console.log("statusa, data.length>0");
-//   console.log(Statusa, Data.length>0);
-//   let list;
-//   console.log(Statusa)
-//   if (Statusa.status == 200 && Data.length == 0) {
-//     return (
-//       <div>
-//         <h1>Dashboard</h1>
-//         <div className="ListCont w-full ">
-//           <ul>
-//             <li>
-//               <div className="flex flex-row place-content-between m-3 p-5 border-2 hover:bg-gray-800 rounded-lg">
-//                 <div>No Chats</div>
-//               </div>
-//             </li>
-//           </ul>
-//         </div>
-//       </div>
-//     )
-    
-//   } else if (Statusa.status == 200 && Data.length > 0) {
-//     return (
-//       <div>
-//         <h1>Dashboard</h1>
-//         <div className="ListCont w-full ">
-//           <ul>
-//             {Data.map((item: any) => (
-//               <li key={item.ChatId}>
-//                 <a 
-//                   // onClick={ () => {
-//                   //   console.log(item);
-//                   //   window.location.href = '/chat/' + item.ChatId;
-//                   // }}
-//                   href={'/chat/' + item.ChatId}
-//                 >
-//                   <div className="flex flex-row place-content-between m-3 p-5 border-2 hover:bg-gray-800 rounded-lg">
-//                     <div>{item.Title}</div>
-//                     <div>{item.Model}</div>
-//                   </div>
-//                 </a>
-//               </li>
-//             ))}
-//           </ul>
-//         </div>
-//       </div>
-//     );
-//   }
-// }
+import { Form, set } from "react-hook-form";
+import { getModelList } from "@/functions/getModelList";
 
 export default function Page() {  
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { currentUser }: any = useAuth();
-  const [statusa, setStatusa] = useState({status: 0, message: ""});
+  const [data, setData] = useState([]); //final chatlist being passed to the rendering function
+  const [loading, setLoading] = useState(true); //sets whether or not loading is triggered
+  const { currentUser }: any = useAuth(); //standard auth to allow access
+  const [serverDetails, setServerDetails] = useState({token:"", addr:""}); //resource server variables
+  const [statusa, setStatusa] = useState({status: 0, message: ""}); //status variables for server
+  const [modelList, setModelList] = useState<any[]>([]); //model list for the select dropdown
   
+  // useEffect being used to fetch data from the server
   useEffect(() => {
-    console.log("hellothere");
     const fetchdata = async () => {
       const resourceServer = await getResourceServer(currentUser);
+      // console.log(resourceServer);
       var [chatList, statusa]:any = await getChatList(resourceServer.addr, resourceServer.token);
-      console.log(chatList, statusa);
+      // var modellist = await getModelList(resourceServer.addr, resourceServer.token);
+      // console.log(modellist)
+      // console.log(chatList, statusa);
+      const tempModelList = await getModelList(resourceServer.addr, resourceServer.token);
+      console.log("tempModelList");
+      console.log(tempModelList);
+      setModelList(tempModelList?tempModelList:[]);
       setData(chatList?chatList:[]);
       setStatusa(statusa);
       setLoading(false);
+      setServerDetails(resourceServer);
     }
     fetchdata();
-    console.log("DATA1: "+data)
+    // console.log("DATA1: "+data)
   },[])
   if (loading) {
     return (
@@ -106,6 +69,7 @@ export default function Page() {
       </div>
     );
   } else if (!loading) {
+    console.log("ServerDetaiks: ",serverDetails.token);
     return (
       <div className="Container">
         <div className="ListNButton w-full">
@@ -114,10 +78,17 @@ export default function Page() {
             Data={data}
           />
           <div className="AddButtonCont flex flex-row-reverse w-full ">
-          <Dialog>
+            <AddChatDialog 
+              modelList={modelList}
+              serverDetails={serverDetails}
+            />
+          {/* <Dialog>
             <DialogTrigger>
               <Button
-              className="mr-3">
+              className="mr-3"
+              onClick={()=>{
+                console.log("clicked");
+              }}>
                 Add Chat
                 <MessageCirclePlus className="ml-1" />
               </Button>
@@ -131,8 +102,11 @@ export default function Page() {
                   Select a model from the list and create a new chat
                 </DialogDescription>
               </DialogHeader>
+              <Form>
+
+              </Form>
             </DialogContent>
-          </Dialog>
+          </Dialog> */}
           </div>
         </div>
       </div>

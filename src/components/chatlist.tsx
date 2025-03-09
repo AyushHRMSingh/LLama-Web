@@ -1,8 +1,7 @@
 export function ChatList({Statusa, Data}:any) {
-    console.log("statusa, data.length>0");
-    console.log(Statusa, Data.length>0);
+    // console.log(Statusa, Data.length>0);
     let list;
-    console.log(Statusa)
+    // console.log(Statusa)
     if (Statusa.status == 200 && Data.length == 0) {
       return (
         <div>
@@ -45,5 +44,9 @@ export function ChatList({Statusa, Data}:any) {
           </div>
         </div>
       );
+    } else {
+      return(
+        <div>Error: Resource Server Not Found or Inaccessible</div>
+      )
     }
   }
