@@ -2,7 +2,7 @@
 import { AuthProvider, useAuth } from "@/context/user.context";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Loading } from "@/components/Loader";
@@ -44,7 +44,7 @@ export default function RootLayout({
               {children}
             </LayoutContent>
           </AuthProvider>
-          <Toaster />
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>

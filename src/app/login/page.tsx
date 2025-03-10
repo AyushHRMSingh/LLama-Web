@@ -5,7 +5,7 @@ import { FormEvent } from "react";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useToast } from "@/components/ui/use-toast";
+// import { useToast } from "@/components/ui/use-toast";
 import {
   Card,
   CardContent,
@@ -14,28 +14,24 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Home() {
   const router = useRouter()
-  const { toast } = useToast()
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget)
-    // console.log(formData);
-    // console.log("submit");
     if (formData.get('type') == "login") {
       try {
         const result = await signInUserWithEmailAndPassword(formData.get("email") as string, formData.get("password") as string)
         if(typeof(result) == 'object' && result.success == true) {
-          toast({
-            title: "Login Successfull",
+          toast.success("Login Successfull",{
             description: "You have been logged in successfully, wait to be redirected",
           });
           router.push("/dashboard")
         } else {
-          toast({
-            variant:"destructive",
-            title: "Login Unsuccessful",
+          toast.error("Login Unsuccessful",{
+            // variant:"destructive",
             description: "Login could not be authenticated",
           });
         }
@@ -48,24 +44,21 @@ export default function Home() {
     else if (formData.get('type') == "signup") {
       try {
         if (formData.get("password") !== formData.get("cpassword")) {
-          toast({
-            variant:"destructive",
-            title: "Passwords Do Not match"
+          toast.error("Passwords Do Not match", {
+            // variant:"destructive",
           });
           return;
         }
         const passlen = formData.get("password")?.toString().length || 0;
         if (formData.get("password") &&  passlen <6) {
-          toast({
-            variant:"destructive",
-            title: "Password must be longer than 6 characters"
+          toast.error("Password must be longer than 6 characters", {
+            // variant:"destructive",
           });
           return
         }
         const result = await registerUserWithEmailAndPassword(formData.get("email") as string, formData.get("password") as string)
         if(result == true) {
-          toast({
-            title: "Sign Up Successfull",
+          toast.success("Sign Up Successfull", {
             description: "You have signed up successfully, wait to be redirected",
           });
           router.push('/dashboard');

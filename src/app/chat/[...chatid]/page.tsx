@@ -1,3 +1,5 @@
+
+
 const ChatPage = ({ params }: { params: { chatid: string } }) => {
   const { chatid } = params;
   

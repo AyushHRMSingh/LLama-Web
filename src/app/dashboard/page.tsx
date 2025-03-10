@@ -4,34 +4,22 @@ import { getResourceServer } from "@/functions/accessResource";
 import { getChatList } from "@/functions/getChatList";
 import { useAuth } from '@/context/user.context';
 import { Loading } from "@/components/Loader";
-import { Button } from "@/components/ui/button"
+
+import { AlertCircle } from "lucide-react"
+ 
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
 
 import { AddChatDialog } from "@/components/addChatDialog";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-
-import { MessageCirclePlus } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
 import { ChatList } from "@/components/chatlist";
-import { Form, set } from "react-hook-form";
 import { getModelList } from "@/functions/getModelList";
+import { pingServer } from "@/functions/pingServer";
+
+
 
 export default function Page() {  
   const [data, setData] = useState([]); //final chatlist being passed to the rendering function
@@ -40,27 +28,47 @@ export default function Page() {
   const [serverDetails, setServerDetails] = useState({token:"", addr:""}); //resource server variables
   const [statusa, setStatusa] = useState({status: 0, message: ""}); //status variables for server
   const [modelList, setModelList] = useState<any[]>([]); //model list for the select dropdown
+  const [serverStatus, setServerStatus] = useState(false); //server status for the resource server
+
+  const ServerMissing = () => {
+    if (serverStatus == false) {
+      return (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            Your resources server is down or inaccessible, please ensure that it is up and running before accessing the service
+          </AlertDescription>
+        </Alert>
+      )
+    }
+    return (
+      <div></div>
+    )
+  }
   
   // useEffect being used to fetch data from the server
   useEffect(() => {
     const fetchdata = async () => {
-      const resourceServer = await getResourceServer(currentUser);
-      // console.log(resourceServer);
-      var [chatList, statusa]:any = await getChatList(resourceServer.addr, resourceServer.token);
-      // var modellist = await getModelList(resourceServer.addr, resourceServer.token);
-      // console.log(modellist)
-      // console.log(chatList, statusa);
-      const tempModelList = await getModelList(resourceServer.addr, resourceServer.token);
-      console.log("tempModelList");
-      console.log(tempModelList);
-      setModelList(tempModelList?tempModelList:[]);
-      setData(chatList?chatList:[]);
-      setStatusa(statusa);
+      const resourceServer:any = await getResourceServer(currentUser);
+      const servStatus = await pingServer(resourceServer.addr, resourceServer.token)
       setLoading(false);
       setServerDetails(resourceServer);
+      setServerStatus(servStatus);
+      if (servStatus == true) {
+        var [chatList, statusa]:any = await getChatList(resourceServer.addr, resourceServer.token);
+        console.log("Server is up");
+        const tempModelList = await getModelList(resourceServer.addr, resourceServer.token);
+        console.log("tempModelList");
+        console.log(tempModelList);
+        setModelList(tempModelList?tempModelList:[]);
+        setData(chatList?chatList:[]);
+        setStatusa(statusa);
+      } else {
+        console.log("Server is down");
+      }
     }
     fetchdata();
-    // console.log("DATA1: "+data)
   },[])
   if (loading) {
     return (
@@ -72,6 +80,7 @@ export default function Page() {
     console.log("ServerDetaiks: ",serverDetails.token);
     return (
       <div className="Container">
+        <ServerMissing />
         <div className="ListNButton w-full">
           <ChatList 
             Statusa={statusa}
@@ -82,31 +91,6 @@ export default function Page() {
               modelList={modelList}
               serverDetails={serverDetails}
             />
-          {/* <Dialog>
-            <DialogTrigger>
-              <Button
-              className="mr-3"
-              onClick={()=>{
-                console.log("clicked");
-              }}>
-                Add Chat
-                <MessageCirclePlus className="ml-1" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  Add Chat
-                </DialogTitle>
-                <DialogDescription>
-                  Select a model from the list and create a new chat
-                </DialogDescription>
-              </DialogHeader>
-              <Form>
-
-              </Form>
-            </DialogContent>
-          </Dialog> */}
           </div>
         </div>
       </div>
