@@ -29,7 +29,17 @@ export function SignCheck() {
   const [isClient, setIsClient] = useState(false);
   const imgpath = "/userimg.svg";
   const loadingpath = "/loading.svg";
-  const { currentUser }: any = useAuth(); // Use the AuthContext to get currentUser
+  const { currentUser, loading }: any = useAuth(); // Use the AuthContext to get currentUser
+  console.log("loading", loading);
+  if (loading) {
+    return (
+      <Avatar className="animate-spin">
+        <AvatarImage src={loadingpath} />
+        <AvatarFallback>CN</AvatarFallback>
+      </Avatar>
+    );
+  }
+  console.log("currentUser", currentUser);
 
   useEffect(() => {
     setIsClient(true); // Indicate that client-side rendering is now possible
@@ -40,12 +50,7 @@ export function SignCheck() {
   }
   var email = "";
   var loggedin = false;
-  // console.log("currentUser");
-  // console.log(currentUser);
-  if (currentUser === "false") {
-    // console.log("isfalse");
-    router.push("/login");
-  }
+  console.log("currentUser", currentUser);
   if (currentUser && currentUser != null) {
     var jsonuser = JSON.parse(JSON.stringify(currentUser));
     email = jsonuser["email"];
@@ -115,8 +120,10 @@ export function avatarComp(imgpath:string, email:string, router:AppRouterInstanc
               // console.log('Signed out')
               signOutUser()
               .then(() => {
-                const url = new URL('/login', window.location.href);
-                router.push(url.toString())
+                setTimeout(()=>{
+                  const url = new URL('/', window.location.href);
+                  router.push(url.toString())
+                },1000)
               })
             }
           }>

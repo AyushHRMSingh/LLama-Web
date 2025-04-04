@@ -20,7 +20,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth();
+export const auth = getAuth(app);
 
 export const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
@@ -68,6 +68,7 @@ export const signInUserWithEmailAndPassword = async (email:string, password:stri
 
 export const signOutUser = async () => {
   await auth.signOut();
+  console.log("User signed out");
 };
 
 export const updateResource = async (resourceDict: JSON, user:any) => {

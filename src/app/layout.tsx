@@ -6,13 +6,15 @@ import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Loading } from "@/components/Loader";
+import { redirect, usePathname } from 'next/navigation'
 
 const inter = Inter({ subsets: ["latin"] });
 
 
-const LayoutContent = ({ children }:any) => {
-  const { loading }:any = useAuth();
 
+const LayoutContent = ({ children }:any) => {
+  const { currentUser, loading }:any = useAuth();
+  console.log("loading", loading);
   if (loading) {
     return (
       <div className="h-screen w-full flex items-center justify-center">
@@ -20,7 +22,16 @@ const LayoutContent = ({ children }:any) => {
       </div>
     );
   }
-
+  console.log("ellum1nt")
+  console.log("currentUser", currentUser);
+  console.log("ellum2nt")
+  if (currentUser == null) {
+    const pathname = usePathname()
+    console.log("pathname", pathname);
+    if (pathname != "/login" && pathname != '/') {
+      redirect('/login');
+    }
+  }
   return children;
 };
 
