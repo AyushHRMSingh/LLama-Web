@@ -74,7 +74,7 @@ export default function Home() {
   }
   return (
     <div className="biglogdiv flex justify-center h-screen">
-      <div className="signbox flex sm:w-4/5 md:w-2/5 p-20 self-center rounded-3xl">
+      <div className="signbox flex sm:w-4/5 md:w-2/5 p-6 md:p-20 self-center rounded-3xl">
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="w-full">
             <TabsTrigger value="login" className="w-full">Log In</TabsTrigger>

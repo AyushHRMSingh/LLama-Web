@@ -81,9 +81,9 @@ export function SignCheck() {
 
 export function Navbar() {
   return (
-    <div className="navb flex justify-between p-3">
+    <div className="navb flex justify-between p-3 h-[7vh]">
       <div className="left grid grid-cols-2 gap-3">
-        <h1 className="scroll-m-20 text-2xl font-extrabold tracking-tight lg:text-3xl">LLama-Web</h1>
+        <h1 className="scroll-m-20 md:text-md font-extrabold tracking-tight lg:text-3xl border-2 border-red-800">LLama-Web</h1>
         <NavigationMenu>
           <Link href="/dashboard" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -142,7 +142,7 @@ export function loginComp() {
     <NavigationMenu className="-ml-4">
       <Link href="/login" legacyBehavior passHref>
         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-          Log In
+          <div className="mr-2 h-4 w-4">Log In</div>
         </NavigationMenuLink>
       </Link>
     </NavigationMenu>

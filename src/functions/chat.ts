@@ -1,0 +1,37 @@
+export async function chat(addr:string, accessToken:string, message:string) {
+    console.log("chat");
+    let addra = addr+"/chat";
+    try{
+      const result  = await fetch(addra,{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          accessToken: accessToken,
+          chatid: message,
+        })
+      })
+      .then((response) => {
+        if (response.status == 200) {
+          return response.json();
+        }
+        return [, {
+          status: response.status,
+        }];
+      })
+      .then((data) => {
+        console.log("chathistory");
+        console.log(data);
+        return data.chathistory;
+      })
+      return [result];
+    } catch (e) {
+      console.log("error");
+      console.log(e);
+      return [[], {
+        status: 404,
+        message: `${e}`,
+      }];
+    }
+  }

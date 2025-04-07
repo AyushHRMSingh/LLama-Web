@@ -1,6 +1,5 @@
 export async function getChatList(addr:string, accessToken:string) {
   console.log("getChatList");
-  // console.log(addr, accessToken);
   let addra = addr+"/chatlist";
   try{
     const result  = await fetch(addra,{
@@ -20,16 +19,7 @@ export async function getChatList(addr:string, accessToken:string) {
         status: response.status,
       }];
     })
-    // .then((response) => response.json())
     .then((data) => {
-      console.log("data progressed");
-      // if (data.success != true) {
-      //   console.log("error");
-      //   return null;
-      // } else {
-      //   console.log("success");
-      //   return data.chatList;
-      // }
       return data.list;
     })
     return [result, {
