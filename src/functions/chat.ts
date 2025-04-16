@@ -1,4 +1,4 @@
-export async function chat(addr:string, accessToken:string, message:string) {
+export async function chat(addr:string, accessToken:string, chatId:string,  message:any) {
     console.log("chat");
     let addra = addr+"/chat";
     try{
@@ -9,7 +9,8 @@ export async function chat(addr:string, accessToken:string, message:string) {
         },
         body: JSON.stringify({
           accessToken: accessToken,
-          chatid: message,
+          chatid: chatId,
+          message: message,
         })
       })
       .then((response) => {
@@ -21,9 +22,9 @@ export async function chat(addr:string, accessToken:string, message:string) {
         }];
       })
       .then((data) => {
-        console.log("chathistory");
+        console.log("gettingchat");
         console.log(data);
-        return data.chathistory;
+        return data.output;
       })
       return [result];
     } catch (e) {

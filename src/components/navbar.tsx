@@ -83,7 +83,7 @@ export function Navbar() {
   return (
     <div className="navb flex justify-between p-3 h-[7vh]">
       <div className="left grid grid-cols-2 gap-3">
-        <h1 className="scroll-m-20 md:text-md font-extrabold tracking-tight lg:text-3xl border-2 border-red-800">LLama-Web</h1>
+        <h1 className="scroll-m-20 md:text-md font-extrabold tracking-tight lg:text-3xl">LLama-Web</h1>
         <NavigationMenu>
           <Link href="/dashboard" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
