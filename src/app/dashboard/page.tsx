@@ -16,7 +16,7 @@ import {
 
 
 import { AddChatDialog } from "@/components/addChatDialog";
-// import { ChatList } from "@/components/chatlist";
+import { ChatList } from "@/components/chatlist";
 import { getModelList } from "@/functions/getModelList";
 import { pingServer } from "@/functions/pingServer";
 
