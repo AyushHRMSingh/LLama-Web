@@ -1,10 +1,11 @@
 'use client'
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ModeToggle } from "./mode-toggle"
 import { signOutUser } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { LogOut, LayoutDashboard } from "lucide-react"
+import { LogOut, LayoutDashboard, Menu } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,129 +23,167 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/context/user.context"
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
-
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 export function SignCheck() {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const imgpath = "/userimg.svg";
   const loadingpath = "/loading.svg";
-  const { currentUser, loading }: any = useAuth(); // Use the AuthContext to get currentUser
-  console.log("loading", loading);
-  if (loading) {
+  const { currentUser, loading }: any = useAuth();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (loading || !isClient) {
     return (
-      <Avatar className="animate-spin">
-        <AvatarImage src={loadingpath} />
+      <Avatar className="animate-spin" aria-label="Loading user profile">
+        <AvatarImage src={loadingpath} alt="Loading animation" />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
     );
   }
-  console.log("currentUser", currentUser);
 
-  useEffect(() => {
-    setIsClient(true); // Indicate that client-side rendering is now possible
-  }, []);
+  const isLoggedIn = currentUser && currentUser !== null && currentUser !== "false";
+  let email = "";
+  
+  if (isLoggedIn) {
+    try {
+      const jsonuser = JSON.parse(JSON.stringify(currentUser));
+      email = jsonuser["email"] || "";
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+    }
+  }
 
-  if (!isClient) {
-    return null; // Render nothing on the server side
-  }
-  var email = "";
-  var loggedin = false;
-  console.log("currentUser", currentUser);
-  if (currentUser && currentUser != null) {
-    var jsonuser = JSON.parse(JSON.stringify(currentUser));
-    email = jsonuser["email"];
-    console.log("isloggedin");
-    console.log(jsonuser);
-    loggedin = true;
-  }
-  const url = new URL('/login', window.location.href);
   return (
     <>
-    {currentUser == "false" ? (
-      <Avatar className="animate-spin">
-        <AvatarImage src={loadingpath} />
-        <AvatarFallback>CN</AvatarFallback>
-      </Avatar>
-    ) : (
-      <>
-        {loggedin ? (
-          avatarComp(imgpath, email, router)
-        ) : (
-          loginComp()
-        )}
-      </>
-    )}
-    </>
-  )
-};
-
-export function Navbar() {
-  return (
-    <div className="navb flex justify-between p-3 h-[7vh]">
-      <div className="left grid grid-cols-2 gap-3">
-        <h1 className="scroll-m-20 md:text-md font-extrabold tracking-tight lg:text-3xl">LLama-Web</h1>
-        <NavigationMenu>
-          <Link href="/dashboard" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              <LayoutDashboard className="mr-2 h-4 w-4" />
-              Dashboard
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenu>
-      </div>
-      <div className="right grid grid-cols-2 gap-2">
-        <ModeToggle />
-        <SignCheck />
-      </div>
-    </div>
-  )
-}
-
-export function avatarComp(imgpath:string, email:string, router:AppRouterInstance) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Avatar>
-          <AvatarImage src={imgpath} />
+      {currentUser === "false" ? (
+        <Avatar className="animate-spin" aria-label="Loading user profile">
+          <AvatarImage src={loadingpath} alt="Loading animation" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
+      ) : (
+        <>
+          {isLoggedIn ? (
+            <AvatarComponent imgpath={imgpath} email={email} router={router} />
+          ) : (
+            <LoginComponent />
+          )}
+        </>
+      )}
+    </>
+  );
+}
+
+export function Navbar() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  return (
+    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex items-center justify-between p-2 md:p-3 h-12 md:h-16 max-w-screen-xl mx-auto">
+        {/* Logo and Main Navigation */}
+        <div className="flex items-center gap-2 md:gap-4">
+          <Link href="/" className="font-extrabold tracking-tight text-xl md:text-2xl lg:text-3xl mr-2 md:mr-4 transition-colors hover:text-primary" aria-label="LLama-Web Home">
+            LLama-Web
+          </Link>
+          
+          {/* Desktop Navigation */}
+          <NavigationMenu className="hidden md:flex">
+            <Link href="/dashboard" legacyBehavior passHref>
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                Dashboard
+              </NavigationMenuLink>
+            </Link>
+          </NavigationMenu>
+        </div>
+        
+        {/* Right-side Controls */}
+        <div className="flex items-center gap-2 md:gap-4">
+          <ModeToggle />
+          <div className="hidden md:block">
+            <SignCheck />
+          </div>
+          
+          {/* Mobile Menu */}
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild className="md:hidden">
+              <Button variant="outline" size="icon" aria-label="Menu">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-64 sm:w-80">
+              <div className="flex flex-col gap-6 pt-4">
+                <div className="flex justify-center">
+                  <SignCheck />
+                </div>
+                
+                <nav className="flex flex-col gap-2">
+                  <Link 
+                    href="/dashboard" 
+                    className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-accent"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <LayoutDashboard className="h-5 w-5" />
+                    <span>Dashboard</span>
+                  </Link>
+                </nav>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+export function AvatarComponent({ imgpath, email, router }: { imgpath: string, email: string, router: AppRouterInstance }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="rounded-full" aria-label="User menu">
+          <Avatar>
+            <AvatarImage src={imgpath} alt="User profile" />
+            <AvatarFallback>{email.substring(0, 2).toUpperCase()}</AvatarFallback>
+          </Avatar>
+        </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="mt-1">
-        <DropdownMenuLabel>{email}</DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="mt-1 w-56">
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{email}</p>
+            <p className="text-xs leading-none text-muted-foreground">Logged in</p>
+          </div>
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <span>
-          <Button variant="destructive" className="w-full" onClick={
-            () => {
-              // console.log('Signed out')
+        <DropdownMenuItem asChild>
+          <Button 
+            variant="destructive" 
+            className="w-full" 
+            onClick={() => {
               signOutUser()
               .then(() => {
-                setTimeout(()=>{
-                  const url = new URL('/', window.location.href);
-                  router.push(url.toString())
-                },1000)
-              })
-            }
-          }>
+                setTimeout(() => {
+                  router.push('/');
+                }, 1000);
+              });
+            }}
+          >
             <LogOut className="mr-2 h-4 w-4" />
             Sign out
           </Button>
-          </span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
 
-export function loginComp() {
+export function LoginComponent() {
   return (
-    <NavigationMenu className="-ml-4">
-      <Link href="/login" legacyBehavior passHref>
-        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-          <div className="mr-2 h-4 w-4">Log In</div>
-        </NavigationMenuLink>
-      </Link>
-    </NavigationMenu>
-  )
+    <Link href="/login" className={navigationMenuTriggerStyle()}>
+      Log In
+    </Link>
+  );
 }
