@@ -12,6 +12,8 @@ import { useAuth } from "@/context/user.context";
 import { getResourceServer } from "@/functions/accessResource";
 import { Loading } from "@/components/Loader";
 import { chat } from "@/functions/chat";
+import ReactMarkdown from 'react-markdown';
+
 
 // const messages = [
 //   {
@@ -74,7 +76,9 @@ const ChatPage = ({ params }: { params: { chatid: string } }) => {
               <ChatBubble key={message.id} variant={variant}>
                 <ChatBubbleAvatar fallback={variant === 'sent' ? 'US' : 'AI'} />
                 <ChatBubbleMessage isLoading={message.isLoading}>
-                  {message.message}
+                  <ReactMarkdown>
+                    {message.message}
+                  </ReactMarkdown>
                 </ChatBubbleMessage>
                 <ChatBubbleActionWrapper>
                   <ChatBubbleAction
